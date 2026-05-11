@@ -1,0 +1,38 @@
+- hosts: localhost
+  connection: local
+  tasks:
+    - name: Instalar paquetes de sistema (Pacman)
+      become: yes
+      community.general.pacman:
+        name:
+          - kitty
+          - telegram-desktop
+          - docker
+          - docker-compose
+          - zellij
+          - helix
+          - wl-clipboard
+          - mlocate
+        state: present
+
+    - name: Instalar paquetes de AUR (Yay)
+      kewlfft.aur.aur:
+        name:
+          - yay
+          - television
+          - hplip-plugin
+        state: present
+
+    - name: Configurar Docker
+      become: yes
+      systemd:
+        name: docker
+        enabled: yes
+        state: started
+
+    - name: Configurar Usuario en Docker
+      become: yes
+      user:
+        name: "{{ ansible_user_id }}"
+        groups: docker
+        append: yes
