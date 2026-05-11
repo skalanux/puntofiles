@@ -1,0 +1,51 @@
+window_rule = []
+swallow = []
+
+[niri]
+
+[piri.scratchpad]
+default_size = "75% 60%"
+default_margin = 50
+
+[piri.plugins]
+scratchpads = true
+
+[piri.window_order]
+enable_event_listener = false
+default_weight = 0
+workspaces = []
+
+[piri.swallow]
+rules = []
+use_pid_matching = true
+
+[piri.workspace_rule]
+auto_width = []
+auto_tile = false
+auto_fill = false
+auto_maximize = false
+
+[scratchpads]
+
+[scratchpads.term]
+direction = "fromRight"
+command = "GTK_IM_MODULE=wayland ghostty --class=float.dropterm"
+app_id = "float.dropterm"
+size = "40% 60%"
+margin = 0
+swallow_to_focus=true
+
+[scratchpads.gemini]
+direction = "fromLeft"
+command = "GTK_IM_MODULE=wayland firefox --name float.dropgemini --profile /home/ska/.local/share/ice/firefox/gemini --no-remote https://gemini.google.com/"
+app_id = "float.dropgemini"
+size = "40% 60%"
+margin = 30
+
+[empty]
+
+[singleton]
+
+[window_order]
+
+[workspace_rule]
