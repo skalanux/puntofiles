@@ -12,23 +12,19 @@ echo "🚀 Iniciando instalación de Skalanea OS (Manjaro)..."
 # 1. Actualización e instalación de herramientas base
 echo "📦 Instalando dependencias críticas (Git, Ansible, Chezmoi)..."
 sudo pacman -Syu --needed --noconfirm git ansible chezmoi base-devel
-
 # 2. Configuración de sudoers para automatización
 if [ ! -f /etc/sudoers.d/ska-automation ]; then
     echo "🔧 Configurando permisos de sudoers y preservación de entorno..."
     
-    # Definimos el contenido en una variable para mayor claridad
-    # 1. Permitimos pacman y yay sin pass
-    # 2. Mantenemos variables de terminal para evitar el error de Ghostty
-    read -r -d '' SUDO_CONFIG << EOM
-$USER ALL=(ALL) NOPASSWD: /usr/bin/pacman, /usr/bin/yay
-Defaults:$USER env_keep += "TERMINFO TERM"
-EOM
-
-    echo "$SUDO_CONFIG" | sudo tee /etc/sudoers.d/ska-automation
+    # Usamos un solo comando de escritura para evitar interrupciones
+    # Agregamos la línea de NOPASSWD y la de env_keep para TERMINFO (Ghostty/Kitty)
+    printf "$USER ALL=(ALL) NOPASSWD: /usr/bin/pacman, /usr/bin/yay\nDefaults:$USER env_keep += \"TERMINFO TERM\"" | sudo tee /etc/sudoers.d/ska-automation > /dev/null
+    
+    # Ajustamos permisos para que sudo no ignore el archivo
     sudo chmod 440 /etc/sudoers.d/ska-automation
-    echo "✅ Permisos de sudo y entorno configurados."
+    echo "✅ Permisos configurados correctamente."
 fi
+
 
 # 3. Inicialización de Chezmoi (Dotfiles)[cite: 1]
 if [ ! -d "$DOTFILES_DIR" ]; then
