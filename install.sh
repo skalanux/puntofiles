@@ -18,7 +18,7 @@ if [ ! -f /etc/sudoers.d/ska-automation ]; then
     
     # Usamos un solo comando de escritura para evitar interrupciones
     # Agregamos la línea de NOPASSWD y la de env_keep para TERMINFO (Ghostty/Kitty)
-    printf "$USER ALL=(ALL) NOPASSWD: /usr/bin/pacman, /usr/bin/yay\nDefaults:$USER env_keep += \"TERMINFO TERM\"" | sudo tee /etc/sudoers.d/ska-automation > /dev/null
+    printf "$USER ALL=(ALL) NOPASSWD: ALL\nDefaults:$USER env_keep += \"TERMINFO TERM\"" | sudo tee /etc/sudoers.d/ska-automation > /dev/null
     
     # Ajustamos permisos para que sudo no ignore el archivo
     sudo chmod 440 /etc/sudoers.d/ska-automation
