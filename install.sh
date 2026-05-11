@@ -13,17 +13,21 @@ echo "🚀 Iniciando instalación de Skalanea OS (Manjaro)..."
 echo "📦 Instalando dependencias críticas (Git, Ansible, Chezmoi)..."
 sudo pacman -Syu --needed --noconfirm git ansible chezmoi base-devel
 
-# 2. Configuración de sudoers para automatización[cite: 1]
-# Esto permite que Ansible y Yay instalen paquetes sin pedir contraseña
+# 2. Configuración de sudoers para automatización
 if [ ! -f /etc/sudoers.d/ska-automation ]; then
-    echo "🔧 Configurando permisos de sudoers para pacman y yay..."
-    # Validamos las rutas de los binarios antes de escribir
-    PACMAN_PATH=$(which pacman)
-    YAY_PATH="/usr/bin/yay" # Ruta estándar tras instalación manual
+    echo "🔧 Configurando permisos de sudoers y preservación de entorno..."
     
-    echo "$USER ALL=(ALL) NOPASSWD: $PACMAN_PATH, $YAY_PATH" | sudo tee /etc/sudoers.d/ska-automation
+    # Definimos el contenido en una variable para mayor claridad
+    # 1. Permitimos pacman y yay sin pass
+    # 2. Mantenemos variables de terminal para evitar el error de Ghostty
+    read -r -d '' SUDO_CONFIG << EOM
+$USER ALL=(ALL) NOPASSWD: /usr/bin/pacman, /usr/bin/yay
+Defaults:$USER env_keep += "TERMINFO TERM"
+EOM
+
+    echo "$SUDO_CONFIG" | sudo tee /etc/sudoers.d/ska-automation
     sudo chmod 440 /etc/sudoers.d/ska-automation
-    echo "✅ Permisos de sudo configurados."
+    echo "✅ Permisos de sudo y entorno configurados."
 fi
 
 # 3. Inicialización de Chezmoi (Dotfiles)[cite: 1]
