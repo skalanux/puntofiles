@@ -13,6 +13,7 @@
           - fish
           - wl-clipboard
           - starship
+          - bash-completion
         state: present
         update_cache: yes
 
@@ -32,3 +33,23 @@
         name: docker
         enabled: yes
         state: started
+
+    - name: Instalar ble.sh
+      ansible.builtin.git:
+        repo: https://github.com/akinomyoga/ble.sh.git
+        dest: /tmp/src/ble.sh
+        recursive: yes
+        depth: 1
+      register: ble_clone
+
+    - name: Compilar e instalar ble.sh
+      #command: make -C /tmp/src/ble.sh install PREFIX={{ ansible_env.HOME }}/.local
+      command: make -C /tmp/src/ble.sh install PREFIX={{ ansible_facts["env"]["HOME"] }}/.local
+      when: ble_clone.changed
+
+    - name: Eliminar fuentes de ble.sh
+      file:
+        path: /tmp/src/ble.sh
+        state: absent
+      when: ble_clone.changed
+
