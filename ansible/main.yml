@@ -14,7 +14,7 @@
           - wl-clipboard
           - starship
         state: present
-        update_cache: yes[cite: 1]
+        update_cache: yes
 
     - name: Instalar software de comunidad (AUR)
       kewlfft.aur.aur:
@@ -31,4 +31,4 @@
       systemd:
         name: docker
         enabled: yes
-        state: started[cite: 1]
+        state: started
