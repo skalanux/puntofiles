@@ -1,0 +1,34 @@
+theme = "onedark"
+
+[editor]
+line-number = "relative"
+mouse = false
+
+[editor.cursor-shape]
+insert = "bar"
+normal = "block"
+select = "underline"
+
+[editor.file-picker]
+hidden = false
+
+[keys.normal]
+"C-s" = ":w"
+"C-z" = "undo"
+"C-r" = ":reload"
+
+[keys.insert]
+"C-z" = "undo"
+"C-s" = [":w", "insert_mode"]
+"C-r" = ":reload"
+
+[editor.statusline]
+left = ["mode", "spinner", "file-name", "file-modification-indicator"]
+center = []
+right = ["diagnostics", "version-control", "position", "file-encoding", "file-type"]
+separator = "│"
+
+[editor.statusline.mode]
+normal = "NORMAL"
+insert = "INSERT"
+select = "SELECT"

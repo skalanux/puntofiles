@@ -1,0 +1,126 @@
+# Configuración de lenguaje para Helix
+# Auto-reload con fs_watcher_lsp
+
+[language-server.fs_watcher_lsp]
+command = "/home/ska/.cargo/bin/fs_watcher_lsp"
+args = []
+
+[language-server.vscode-html-language-server]
+command = "/home/ska/.npm-global/bin/vscode-html-language-server"
+args = []
+
+# Python con auto-reload
+[[language]]
+name = "python"
+language-id = "python"
+roots = ["pyproject.toml", "poetry.lock", ".git", ".venv/"]
+language-servers = ["ruff", "basedpyright", "fs_watcher_lsp"]
+formatter = { command = "sh", args = [
+  "-c",
+  "uvx ruff check --fix - | uvx ruff format -",
+] }
+file-types = ["py", "ipynb"]
+comment-token = "#"
+shebangs = ["python"]
+auto-format = true
+
+[language-server.ruff]
+command = "uvx"
+args = ["ruff", "server"]
+environment = { "RUFF_TRACE" = "messages" }
+
+[language-server.ruff.config.settings]
+lineLength = 100
+logLevel = "debug"
+fix = true
+
+[language-server.ruff.config.settings.lint]
+select = [
+  "E",     # errores de pycodestyle
+  "W",     # advertencias de pycodestyle
+  "F",     # pyflakes
+  "B",     # flake8-bugbear
+  "I",     # isort
+  "RUF",   # ruff
+  "D",     # docstrings
+  "UP",    # pyupgrade
+  "ANN",   # anotaciones
+  "ASYNC", # chequeos asíncronos
+  "S",     # bandit (seguridad)
+  "YTT",   # chequeos de fechas y horas
+  "A",     # sombreamiento de builtins
+  "RET",   # sentencias return
+  "TCH",   # chequeo de tipos
+  "ARG",   # argumentos de funciones
+  "PTH",   # pathlib sobre os.path
+  "ERA",   # suposiciones de entorno
+  "LOG",   # prácticas de logging
+  "N",     # nombres
+  "C4",    # comprensiones
+  "T10",   # uso del debugger
+  "SIM",   # simplificar código
+  "TRY",   # try/except
+  "C90",   # complejidad
+  "PGH",   # hooks de patrones
+]
+ignore = [
+  "E501", # línea demasiado larga
+  "E731", # no asignar lambda
+  "D205", # espaciado de línea en blanco en docstrings
+  "D100", # falta docstring en módulo público
+  "D104", # falta docstring en paquete público
+]
+
+[tool.ruff.lint.per-file-ignores]
+"src/tests/*" = ["S101", "D103"] # permitir aserciones, permitir docstrings faltantes
+
+[language-server.ruff.config.settings.format]
+quote-style = "double"
+docstring-code-format = true
+indent-style = "space"
+
+[language-server.basedpyright]
+command = "uvx"
+args = ["--from", "basedpyright", "basedpyright-langserver", "--stdio"]
+
+[language-server.basedpyright.config]
+python.pythonPath = ".venv/bin/python"
+
+[language-server.basedpyright.config.basedpyright.analysis]
+autoSearchPaths = true
+typeCheckingMode = "basic"
+diagnosticMode = "openFilesOnly"
+autoImportCompletions = true
+
+# JavaScript con auto-reload
+[[language]]
+name = "javascript"
+language-servers = ["typescript-language-server", "fs_watcher_lsp"]
+
+# TypeScript con auto-reload
+[[language]]
+name = "typescript"
+language-servers = ["typescript-language-server", "fs_watcher_lsp"]
+
+# CSS con auto-reload
+[[language]]
+name = "css"
+language-servers = ["vscode-css-language-server", "fs_watcher_lsp"]
+
+# HTML con auto-reload
+
+[[language]]
+name = "html"
+auto-format = true
+language-servers = ["vscode-html-language-server", "fs_watcher_lsp"]
+#formatter = { command = "prettier", args = ["--parser", "html"] }
+
+# Markdown con auto-reload
+[[language]]
+name = "markdown"
+language-servers = ["marksman", "fs_watcher_lsp"]
+# HTML con auto-reload
+
+[[language]]
+name = "toml"
+language-servers = ["fs_watcher_lsp"]
