@@ -13,17 +13,49 @@
           - fish
           - wl-clipboard
           - starship
-          - bash-completion
+          - syncthing
+          - telegram-desktop
+          - base-devel
+          - zoxide
+          - mcfly
+          - neovim
+          - yay
+          - yazi
+          - bat
+          - exa
+          - inkscape
+          - gimp
+          - mlocate
+          - unzip
+          - direnv
+          - snapd
+          - obs-studio
+          - ghostty
+          - niri
+          
         state: present
         update_cache: yes
+        
+    - name: Eliminar versión estable de quickshell para evitar conflictos
+      become: yes
+      community.general.pacman:
+        name: quickshell
+        state: absent
+        
 
+    - name: Eliminar versión estable de quickshell para evitar conflictos
+      become: yes
+      community.general.pacman:
+        name: dms-shell-git
+        state: absent
+               
     - name: Instalar software de comunidad (AUR)
       kewlfft.aur.aur:
         name: 
-          - yay
           - television
           - hplip-plugin
-          - ghostty
+          - quickshell-git
+          - dms-shell-git
         state: present
       become: no
 
@@ -52,4 +84,3 @@
         path: /tmp/src/ble.sh
         state: absent
       when: ble_clone.changed
-
