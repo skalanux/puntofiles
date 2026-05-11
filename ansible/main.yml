@@ -1,38 +1,34 @@
 - hosts: localhost
   connection: local
   tasks:
-    - name: Instalar paquetes de sistema (Pacman)
+    - name: Instalar software base (Pacman)
       become: yes
       community.general.pacman:
-        name:
+        name: 
           - kitty
-          - telegram-desktop
           - docker
           - docker-compose
-          - zellij
           - helix
+          - zellij
+          - fish
           - wl-clipboard
-          - mlocate
+          - starship
         state: present
+        update_cache: yes[cite: 1]
 
-    - name: Instalar paquetes de AUR (Yay)
+    - name: Instalar software de comunidad (AUR)
       kewlfft.aur.aur:
-        name:
+        name: 
           - yay
           - television
           - hplip-plugin
+          - ghostty
         state: present
+      become: no # Yay nunca debe correr como root
 
-    - name: Configurar Docker
+    - name: Configurar servicios de sistema
       become: yes
       systemd:
         name: docker
         enabled: yes
-        state: started
-
-    - name: Configurar Usuario en Docker
-      become: yes
-      user:
-        name: "{{ ansible_user_id }}"
-        groups: docker
-        append: yes
+        state: started[cite: 1]
