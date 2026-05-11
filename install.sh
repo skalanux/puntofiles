@@ -1,31 +1,42 @@
 #!/bin/bash
 set -e
 
-# Colores para la terminal
--n "\e[32m" && echo "--- Iniciando instalación de Skalanea OS ---" && echo -ne "\e[0m"
+# Definición de variables
+USER_NAME="skalanux"
+REPO_NAME="puntofiles"
+DOTFILES_REPO="https://github.com/$USER_NAME/$REPO_NAME.git"
+DOTFILES_DIR="$HOME/.local/share/chezmoi"
 
-# 1. Instalar lo mínimo para arrancar
+echo "🚀 Iniciando instalación de Skalanea OS..."
+
+# 1. Preparación del sistema base
 sudo pacman -Syu --needed --noconfirm git ansible chezmoi base-devel
 
-# 2. Clonar tu repositorio de configuración (Ansible + Dotfiles)
-# Reemplaza con tu repo real
-export DOTFILES_REPO="https://github.com/skalanux/puntofiles.git"
-export DOTFILES_DIR="$HOME/.local/share/chezmoi"
+# 2. Configurar sudoers para evitar bloqueos en la automatización
+if [ ! -f /etc/sudoers.d/ska-automation ]; then
+    echo "🔧 Configurando permisos de sudoers para pacman y yay..."
+    echo "$USER ALL=(ALL) NOPASSWD: /usr/bin/pacman, /usr/bin/yay" | sudo tee /etc/sudoers.d/ska-automation
+fi
 
+# 3. Inicializar Chezmoi
 if [ ! -d "$DOTFILES_DIR" ]; then
-    echo "Clonando configuraciones..."
-    chezmoi init --apply $DOTFILES_REPO
+    echo "🏠 Clonando dotfiles desde $DOTFILES_REPO..."
+    chezmoi init --apply "$DOTFILES_REPO"
 else
-    echo "El repositorio ya existe, actualizando..."
+    echo "🔄 Actualizando dotfiles existentes..."
     chezmoi update
 fi
 
-# 3. Ejecutar Ansible desde dentro del repo clonado por Chezmoi
-if [ -f "$DOTFILES_DIR/ansible/main.yml" ]; then
-    echo "Ejecutando Ansible para configurar el sistema..."
-    cd "$DOTFILES_DIR/ansible"
+# 4. Ejecutar el Playbook de Ansible
+# Chezmoi descarga el repo en $DOTFILES_DIR
+ANSIBLE_MAIN="$DOTFILES_DIR/ansible/main.yml"
+
+if [ -f "$ANSIBLE_MAIN" ]; then
+    echo "🤖 Ejecutando Ansible Playbook..."
     ansible-galaxy collection install community.general kewlfft.aur
-    ansible-playbook -K main.yml
+    ansible-playbook "$ANSIBLE_MAIN"
+else
+    echo "⚠️ No se encontró el playbook en $ANSIBLE_MAIN"
 fi
 
-echo "--- Proceso completado. Reinicia la terminal o la sesión. ---"
+echo "✅ Instalación completada. Se recomienda reiniciar la sesión para aplicar cambios de grupo (docker)."
