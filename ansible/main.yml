@@ -32,6 +32,8 @@
           - obs-studio
           - ghostty
           - niri
+          - nodejs
+          - npm
           
         state: present
         update_cache: yes
