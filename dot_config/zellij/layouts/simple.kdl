@@ -1,0 +1,31 @@
+layout {
+    pane size=1 borderless=true {
+        plugin location="file:~/.config/zellij/plugins/zjstatus.wasm" {
+            format_left  "{mode}#[fg=#89B4FA,bg=#313244]{tabs}"
+            format_right "#[fg=#313244]#[bg=#313244,fg=#89B4FA,bold] {datetime} "
+            format_space "#[bg=#313244]"
+
+            mode_normal        "#[bg=#89B4FA,fg=#181825,bold] NORMAL "
+            mode_pane          "#[bg=#A6E3A1,fg=#181825,bold] PANE "
+            mode_tab           "#[bg=#F9E2AF,fg=#181825,bold] TAB "
+            mode_scroll        "#[bg=#FAB387,fg=#181825,bold] SCROLL "
+            mode_enter_search  "#[bg=#89B4FA,fg=#181825,bold] ENT-SEARCH "
+            mode_search        "#[bg=#89B4FA,fg=#181825,bold] SEARCH "
+            mode_resize        "#[bg=#F38BA8,fg=#181825,bold] RESIZE "
+
+            tab_normal              "#[bg=#313244,fg=#6C7086] {index} {name} "
+            tab_active              "#[bg=#313244,fg=#89B4FA,bold,italic] {index} {name} "
+            tab_separator           "#[bg=#313244,fg=#45475a]"
+
+            datetime                "{format}"
+            datetime_format         "%H:%M"
+            datetime_timezone       "America/Argentina/Buenos_Aires"
+        }
+    }
+    pane {
+        command "fish"
+    }
+    pane size=1 borderless=true {
+        plugin location="zellij:status-bar"
+    }
+}

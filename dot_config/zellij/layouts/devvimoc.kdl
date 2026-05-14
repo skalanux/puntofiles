@@ -1,61 +1,52 @@
 layout {
-    // 1. Quitamos la barra de arriba (tab-bar)
-    // 2. El cuerpo principal (Helix + terminales) queda igual
-pane size=1 borderless=true {
-    plugin location="file:~/.config/zellij/plugins/zjstatus.wasm" {
-        // Colores base (ajustalos a tu gusto)
-        // Azul: #89B4FA, Gris: #313244, Fondo: #181825
-        
-        format_left  "{mode}#[fg=#89B4FA,bg=#313244]{tabs}"
-        format_right "#[fg=#313244]#[bg=#313244,fg=#89B4FA,bold] {datetime} "
-        format_space "#[bg=#313244]"
+    tab hide_floating_panes=true {
+        pane size=1 borderless=true {
+            plugin location="file:~/.config/zellij/plugins/zjstatus.wasm" {
+                format_left  "{mode}#[fg=#89B4FA,bg=#313244]{tabs}"
+                format_right "#[fg=#313244]#[bg=#313244,fg=#89B4FA,bold] {datetime} "
+                format_space "#[bg=#313244]"
 
-        // Estilo de los MODOS (el bloque inicial a la izquierda)
-        mode_normal        "#[bg=#89B4FA,fg=#181825,bold] NORMAL "
-        mode_pane          "#[bg=#A6E3A1,fg=#181825,bold] PANE "
-        mode_tab           "#[bg=#F9E2AF,fg=#181825,bold] TAB "
-        mode_scroll        "#[bg=#FAB387,fg=#181825,bold] SCROLL "
-        mode_enter_search  "#[bg=#89B4FA,fg=#181825,bold] ENT-SEARCH "
-        mode_search        "#[bg=#89B4FA,fg=#181825,bold] SEARCH "
-        mode_resize        "#[bg=#F38BA8,fg=#181825,bold] RESIZE "
+                mode_normal        "#[bg=#89B4FA,fg=#181825,bold] NORMAL "
+                mode_pane          "#[bg=#A6E3A1,fg=#181825,bold] PANE "
+                mode_tab           "#[bg=#F9E2AF,fg=#181825,bold] TAB "
+                mode_scroll        "#[bg=#FAB387,fg=#181825,bold] SCROLL "
+                mode_enter_search  "#[bg=#89B4FA,fg=#181825,bold] ENT-SEARCH "
+                mode_search        "#[bg=#89B4FA,fg=#181825,bold] SEARCH "
+                mode_resize        "#[bg=#F38BA8,fg=#181825,bold] RESIZE "
 
-        // Estilo de las PESTAÑAS (reemplaza a la tab-bar de arriba)
-        tab_normal              "#[bg=#313244,fg=#6C7086] {index} {name} "
-        tab_active              "#[bg=#313244,fg=#89B4FA,bold,italic] {index} {name} "
-        tab_separator           "#[bg=#313244,fg=#45475a]"
+                tab_normal              "#[bg=#313244,fg=#6C7086] {index} {name} "
+                tab_active              "#[bg=#313244,fg=#89B4FA,bold,italic] {index} {name} "
+                tab_separator           "#[bg=#313244,fg=#45475a]"
 
-        // Configuración de fecha y hora
-        datetime                "{format}"
-        datetime_format         "%H:%M"
-        datetime_timezone       "America/Argentina/Buenos_Aires"
-    }
-}
-// Panel flotante para tu comando personalizado
-    floating_panes {
-        pane {
-            name "opencode"
-            command "opencode"
-            args "--port"
-            width "80%"
-            height "80%"
-            x "10%"
-            y "10%"
+                datetime                "{format}"
+                datetime_format         "%H:%M"
+                datetime_timezone       "America/Argentina/Buenos_Aires"
+            }
         }
-    }
-    pane split_direction="horizontal" {
-        pane size="70%" {
-            command "nvim"
-            focus true
-            cwd "."
+        floating_panes {
+            pane {
+                name "opencode"
+                command "opencode"
+                args "--port"
+                width "80%"
+                height "80%"
+                x "10%"
+                y "10%"
+            }
         }
-        pane split_direction="vertical" size="30%" {
-            pane { name "runserver"; command "fish"; cwd ".";}
-            pane { name "terminal"; command "fish"; cwd "." ;}
+        pane split_direction="horizontal" {
+            pane size="70%" {
+                command "nvim"
+                focus true
+                cwd "."
+            }
+            pane split_direction="vertical" size="30%" {
+                pane { name "runserver"; command "fish"; cwd ".";}
+                pane { name "terminal"; command "fish"; cwd "." ;}
+            }
         }
-    }
-// Barra de estado inferior con RELOJ
-    pane size=1 borderless=true {
-        plugin location="zellij:status-bar" 
-        
+        pane size=1 borderless=true {
+            plugin location="zellij:status-bar"
+        }
     }
 }
