@@ -108,3 +108,9 @@
         path: /tmp/src/ble.sh
         state: absent
       when: ble_clone.changed
+
+    - name: Instalar OpenCode usando el script oficial de bash
+      shell: "curl -fsSL https://opencode.ai/install | bash"
+      args:
+        chdir: "{{ ansible_facts.env.HOME }}"
+        creates: "{{ ansible_facts.env.HOME }}.opencode/bin/opencode"  # Evita que se vuelva a ejecutar si ya existe
