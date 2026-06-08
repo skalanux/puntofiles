@@ -61,12 +61,20 @@
         state: present
       become: no
 
-    - name: Configurar servicios de sistema
+    - name: Configurar docker
       become: yes
       systemd:
         name: docker
         enabled: yes
         state: started
+
+    - name: Configurar servicios dms
+      become: false
+      systemd:
+        name: dms.service
+        enabled: yes
+        state: started
+        scope: user
 
     - name: Instalar ble.sh
       ansible.builtin.git:
