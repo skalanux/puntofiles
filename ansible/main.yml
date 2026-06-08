@@ -76,6 +76,20 @@
         state: started
         scope: user
 
+    - name: Configurar el nombre de usuario global de git
+      become: false
+      community.general.git_config:
+        name: user.name
+        value: "Juan Manuel Schillaci"
+        scope: global
+
+    - name: Configurar el correo electronico global de git
+      become: false
+      community.general.git_config:
+        name: user.email
+        value: "jmschillaci@gmail.com"
+        scope: global
+
     - name: Instalar ble.sh
       ansible.builtin.git:
         repo: https://github.com/akinomyoga/ble.sh.git
