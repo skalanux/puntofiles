@@ -137,3 +137,11 @@
         name: "{{ ansible_facts.user_id }}"
         shell: "{{ fish_path.stdout }}"
       become: true
+
+    - name: Asegurar que el usuario pertenezca al grupo docker
+      ansible.builtin.user:
+        name: "{{ ansible_facts.user_id }}"
+        groups: docker
+        append: true  # <-- CRUCIAL: Evita que el usuario sea eliminado de otros grupos
+      become: true
+      tags: grupo_docker
