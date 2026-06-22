@@ -114,3 +114,26 @@
       args:
         chdir: "{{ ansible_facts.env.HOME }}"
         creates: "{{ ansible_facts.env.HOME }}.opencode/bin/opencode"  # Evita que se vuelva a ejecutar si ya existe
+
+    - name: Asegurar que Fish esté instalado (ejemplo para Debian/Ubuntu)
+      ansible.builtin.package:
+        name: fish
+        state: present
+
+    - name: Obtener la ruta absoluta del ejecutable de Fish
+      ansible.builtin.command: which fish
+      register: fish_path
+      changed_when: false
+      failed_when: fish_path.rc != 0
+
+    - name: Asegurar que Fish esté en la lista de shells permitidos (/etc/shells)
+      ansible.builtin.lineinfile:
+        path: /etc/shells
+        line: "{{ fish_path.stdout }}"
+        state: present
+
+    - name: Cambiar el shell por defecto del usuario a Fish
+      ansible.builtin.user:
+        name: "{{ ansible_facts.user_id }}"
+        shell: "{{ fish_path.stdout }}"
+      become: true
