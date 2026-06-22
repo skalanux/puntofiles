@@ -61,12 +61,34 @@
         state: present
       become: no
 
-    - name: Configurar servicios de sistema
+    - name: Configurar docker
       become: yes
       systemd:
         name: docker
         enabled: yes
         state: started
+
+    - name: Configurar servicios dms
+      become: false
+      systemd:
+        name: dms.service
+        enabled: yes
+        state: started
+        scope: user
+
+    - name: Configurar el nombre de usuario global de git
+      become: false
+      community.general.git_config:
+        name: user.name
+        value: "Juan Manuel Schillaci"
+        scope: global
+
+    - name: Configurar el correo electronico global de git
+      become: false
+      community.general.git_config:
+        name: user.email
+        value: "jmschillaci@gmail.com"
+        scope: global
 
     - name: Instalar ble.sh
       ansible.builtin.git:
@@ -86,3 +108,9 @@
         path: /tmp/src/ble.sh
         state: absent
       when: ble_clone.changed
+
+    - name: Instalar OpenCode usando el script oficial de bash
+      shell: "curl -fsSL https://opencode.ai/install | bash"
+      args:
+        chdir: "{{ ansible_facts.env.HOME }}"
+        creates: "{{ ansible_facts.env.HOME }}.opencode/bin/opencode"  # Evita que se vuelva a ejecutar si ya existe
