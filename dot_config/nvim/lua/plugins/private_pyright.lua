@@ -5,20 +5,19 @@ return {
     opts = {
       ---@type lspconfig.options
       servers = {
-        -- pyright will be automatically installed with mason and loaded with lspconfig
         pyright = {
           settings = {
             pyright = {
-              disableOrganizeImports = true, -- Using Ruff
+              disableOrganizeImports = true,
             },
             python = {
               analysis = {
-                ignore = { "*" }, -- Using Ruff
-                typeCheckingMode = "off", -- Using mypy
+                typeCheckingMode = "basic",
               },
             },
           },
         },
+        ruff_lsp = {},
       },
     },
   },
