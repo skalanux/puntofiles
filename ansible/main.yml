@@ -32,6 +32,7 @@
           - obs-studio
           - ghostty
           - niri
+          - spotify-launcher
           - nodejs
           - npm
           - uv
@@ -59,6 +60,7 @@
           - hplip-plugin
           - quickshell-git
           - dms-shell-git
+          - obsidian
         state: present
       become: no
 
@@ -115,6 +117,18 @@
       args:
         chdir: "{{ ansible_facts.env.HOME }}"
         creates: "{{ ansible_facts.env.HOME }}.opencode/bin/opencode"  # Evita que se vuelva a ejecutar si ya existe
+
+    - name: Instalar Gentle AI
+      shell: "curl -fsSL https://raw.githubusercontent.com/Gentleman-Programming/gentle-ai/main/scripts/install.sh | bash"
+      args:
+        chdir: "{{ ansible_facts.env.HOME }}"
+        creates: "{{ ansible_facts.env.HOME }}/.gentle-ai/bin/gentle"
+
+    - name: Instalar Linuxbrew (Homebrew)
+      shell: '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
+      args:
+        creates: /home/linuxbrew/.linuxbrew/bin/brew
+      become: no
 
     - name: Asegurar que Fish esté instalado (ejemplo para Debian/Ubuntu)
       ansible.builtin.package:
