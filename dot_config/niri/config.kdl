@@ -21,6 +21,7 @@ input {
             // US International con AltGr: ' y " normales, AltGr+'+vocal=acento
             layout "us"
             variant "altgr-intl"
+            options "ctrl:nocaps"
         }
 
         // Enable numlock on startup, omitting this setting disables it.
