@@ -18,12 +18,9 @@ gestures {
 input {
     keyboard {
         xkb {
-            // US International con AltGr (Alt derecho) para acentos.
-            // layout    "us"      -> teclado US estándar
-            // variant   "alt-intl"-> AltGr + vocal = acento, AltGr + n = ñ, etc.
-            //            Sin dead-keys en puntuación normal.
+            // US International con AltGr: ' y " normales, AltGr+'+vocal=acento
             layout "us"
-            variant "alt-intl"
+            variant "altgr-intl"
         }
 
         // Enable numlock on startup, omitting this setting disables it.
