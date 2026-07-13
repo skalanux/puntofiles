@@ -35,6 +35,7 @@
           - spotify-launcher
           - nodejs
           - npm
+          - ripgrep
           - uv
           
         state: present
