@@ -126,6 +126,12 @@
         chdir: "{{ ansible_facts.env.HOME }}"
         creates: "{{ ansible_facts.env.HOME }}/.gentle-ai/bin/gentle"
 
+    - name: Instalar Herdr
+      shell: "curl -fsSL https://herdr.dev/install.sh | sh"
+      args:
+        chdir: "{{ ansible_facts.env.HOME }}"
+        creates: "{{ ansible_facts.env.HOME }}/.local/bin/herdr"
+
     - name: Instalar Linuxbrew (Homebrew)
       shell: '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
       args:
