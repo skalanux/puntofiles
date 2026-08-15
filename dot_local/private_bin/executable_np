@@ -1,0 +1,109 @@
+#!/usr/bin/env bash
+# np - create a herdr project workspace with the dev layout
+#
+# Layout:
+#   tab dev    : nvim (70% top) + 2 shells (bottom), focus on nvim
+#   tab agents : opencode --port (nvim auto-discovers the server)
+#
+# Usage:
+#   np                    # uses $HERDR_ACTIVE_PANE_CWD (keybind context) or $PWD
+#   np /path/to/project   # explicit directory
+#
+# Wire it to a keybind in ~/.config/herdr/config.toml:
+#   [[keys.command]]
+#   key = "prefix+shift+m"
+#   type = "popup"
+#   command = "np"
+#   description = "create project workspace with dev layout"
+#
+# When run interactively (keybind type = "popup" or "pane"), np asks for the
+# workspace name with the directory basename as default. Detached runs
+# (type = "shell") skip the prompt and use the basename directly.
+
+set -euo pipefail
+
+HERDR_BIN="${HERDR_BIN_PATH:-herdr}"
+
+# --- resolve target directory ---------------------------------------------
+if [[ $# -ge 1 ]]; then
+  TARGET_DIR="$1"
+elif [[ -n "${HERDR_ACTIVE_PANE_CWD:-}" ]]; then
+  TARGET_DIR="$HERDR_ACTIVE_PANE_CWD"
+else
+  TARGET_DIR="$PWD"
+fi
+
+TARGET_DIR="$(realpath "$TARGET_DIR")"
+
+if [[ ! -d "$TARGET_DIR" ]]; then
+  echo "np: not a directory: $TARGET_DIR" >&2
+  exit 1
+fi
+
+LABEL="$(basename "$TARGET_DIR")"
+
+# --- optional interactive workspace name --------------------------------------
+# Only prompts when running on a real terminal (keybind type = "popup"/"pane").
+# Skips the prompt when detached (type = "shell") or piped input.
+if [[ -t 0 && $# -lt 1 ]]; then
+  read -rp "Workspace name [$LABEL]: " NAME_INPUT
+  if [[ -n "$NAME_INPUT" ]]; then
+    LABEL="$NAME_INPUT"
+  fi
+fi
+
+# --- helpers ----------------------------------------------------------------
+json_field() { python3 -c "import json,sys; d=json.load(sys.stdin); print($1)" 2>/dev/null; }
+
+herdr_quiet() { "$HERDR_BIN" "$@" >/dev/null 2>&1; }
+
+# --- 1. create workspace (json: workspace/tab/root_pane) --------------------
+CREATE_JSON="$("$HERDR_BIN" workspace create --cwd "$TARGET_DIR" --label "$LABEL" --focus)"
+WORKSPACE_ID="$(printf '%s' "$CREATE_JSON" | json_field "d['result']['workspace']['workspace_id']")"
+DEV_TAB_ID="$(printf '%s' "$CREATE_JSON" | json_field "d['result']['tab']['tab_id']")"
+ROOT_PANE_ID="$(printf '%s' "$CREATE_JSON" | json_field "d['result']['root_pane']['pane_id']")"
+
+if [[ -z "$WORKSPACE_ID" || -z "$DEV_TAB_ID" || -z "$ROOT_PANE_ID" ]]; then
+  echo "np: failed to parse workspace create response" >&2
+  printf '%s\n' "$CREATE_JSON" >&2
+  exit 1
+fi
+
+# --- 2. dev tab: nvim 70% top, 2 shells bottom -------------------------------
+SPLIT_JSON="$("$HERDR_BIN" pane split "$ROOT_PANE_ID" --direction down --ratio 0.7)"
+BOTTOM_LEFT_PANE="$(printf '%s' "$SPLIT_JSON" | json_field "d['result']['pane']['pane_id']")"
+if [[ -z "$BOTTOM_LEFT_PANE" ]]; then
+  echo "np: failed to parse first split response" >&2
+  printf '%s\n' "$SPLIT_JSON" >&2
+  exit 1
+fi
+
+SPLIT2_JSON="$("$HERDR_BIN" pane split "$BOTTOM_LEFT_PANE" --direction right --ratio 0.5)"
+BOTTOM_RIGHT_PANE="$(printf '%s' "$SPLIT2_JSON" | json_field "d['result']['pane']['pane_id']")"
+if [[ -z "$BOTTOM_RIGHT_PANE" ]]; then
+  echo "np: failed to parse second split response" >&2
+  printf '%s\n' "$SPLIT2_JSON" >&2
+  exit 1
+fi
+
+herdr_quiet pane rename "$ROOT_PANE_ID" editor
+herdr_quiet pane rename "$BOTTOM_LEFT_PANE" shell1
+herdr_quiet pane rename "$BOTTOM_RIGHT_PANE" shell2
+
+# launch nvim in the editor pane (focus stays on the new workspace)
+herdr_quiet pane run "$ROOT_PANE_ID" "nvim"
+
+# --- 3. agents tab: opencode --port ------------------------------------------
+AGENTS_JSON="$("$HERDR_BIN" tab create --workspace "$WORKSPACE_ID" --cwd "$TARGET_DIR" --label agents)"
+AGENTS_PANE="$(printf '%s' "$AGENTS_JSON" | json_field "d['result']['root_pane']['pane_id']")"
+if [[ -z "$AGENTS_PANE" ]]; then
+  echo "np: failed to parse agents tab response" >&2
+  printf '%s\n' "$AGENTS_JSON" >&2
+  exit 1
+fi
+
+herdr_quiet pane run "$AGENTS_PANE" "opencode --port"
+
+echo "np: created workspace '$LABEL' ($WORKSPACE_ID)"
+echo "    dev tab: $DEV_TAB_ID ($ROOT_PANE_ID + $BOTTOM_LEFT_PANE + $BOTTOM_RIGHT_PANE)"
+echo "    agents tab: opencode on $AGENTS_PANE"

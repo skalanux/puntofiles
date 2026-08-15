@@ -1,0 +1,31 @@
+onboarding = false
+# herdr config - managed by hand
+# See: https://herdr.dev/docs/config-reference/
+
+[ui]
+# No borders and no gaps: split panes sit flush, no divider lines
+pane_borders = false
+pane_gaps = true
+
+# No reserved scrollbar column on the right edge of panes
+pane_scrollbars = false
+
+# Start with the sidebar (spaces + agents) collapsed
+sidebar_start_collapsed = true
+
+# When collapsed, hide it entirely (zero width) instead of a compact rail
+#sidebar_collapsed_mode = "hidden"
+
+[keys]
+# Prefix key to enter prefix mode
+prefix = "ctrl+a"
+
+# Create a project workspace with the full dev layout (nvim + 2 shells + opencode).
+# Uses the focused pane's cwd. The native prefix+shift+n stays untouched for a
+# plain empty workspace.
+# type = "popup" gives np a real terminal so it can ask for the workspace name.
+[[keys.command]]
+key = "prefix+shift+m"
+type = "popup"
+command = "np"
+description = "create project workspace with dev layout"

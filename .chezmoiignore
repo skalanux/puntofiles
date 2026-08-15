@@ -1,3 +1,9 @@
 .config/zellij/plugins/**
 .config/nvim/lazy-lock.json
 
+# herdr runtime files (logs, session, lock) — only config.toml is managed
+.config/herdr/*.log
+.config/herdr/*.lock
+.config/herdr/session.json
+.config/herdr/release-notes.json
+
