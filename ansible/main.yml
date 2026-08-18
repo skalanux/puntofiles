@@ -64,6 +64,8 @@
           - quickshell-git
           - dms-shell-git
           - obsidian
+          - paru
+          - revdiff
         state: present
       become: no
 
@@ -73,6 +75,14 @@
         name: docker
         enabled: yes
         state: started
+
+    - name: Configurar syncthing
+      become: false
+      systemd:
+        name: syncthing
+        enabled: yes
+        state: started
+        scope: user
 
     - name: Configurar servicios dms
       become: false
