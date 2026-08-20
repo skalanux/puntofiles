@@ -1,0 +1,28 @@
+[
+  {
+    "plugin_id": "provision-on-worktree",
+    "name": "Provision on worktree",
+    "version": "0.1.0",
+    "min_herdr_version": "0.8.0",
+    "description": "Runs make up when a worktree is created",
+    "manifest_path": "/home/ska/.config/herdr/plugins/provision-on-worktree/herdr-plugin.toml",
+    "plugin_root": "/home/ska/.config/herdr/plugins/provision-on-worktree",
+    "enabled": true,
+    "platforms": [
+      "linux",
+      "macos"
+    ],
+    "events": [
+      {
+        "on": "worktree.created",
+        "command": [
+          "sh",
+          "/home/ska/.config/herdr/plugins/provision-on-worktree/provision.sh"
+        ]
+      }
+    ],
+    "source": {
+      "kind": "local"
+    }
+  }
+]
